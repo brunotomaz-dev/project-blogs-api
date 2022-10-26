@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     }
   }, {
-    underscore: true,
+    underscored: true,
     timestamps: false,
   });
 

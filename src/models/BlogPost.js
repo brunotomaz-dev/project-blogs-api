@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     published: DataTypes.DATE,
     updated: DataTypes.DATE,
   }, {
-    underscore: true,
+    underscored: true,
     timestamp: false,
   });
 
