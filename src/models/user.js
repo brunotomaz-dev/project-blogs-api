@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
   }, {
     underscore: true,
+    timestamp: false,
   });
 
   User.associate = (models) => {

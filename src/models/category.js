@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
   }, {
     underscore: true,
+    timestamp: false,
   });
 
   // Category.associate = (models) => {
