@@ -23,12 +23,25 @@ const createUser = async ({ displayName, email, password, image }) => {
 };
 
 const getAll = async () => {
-  const getAllUsers = await User.findAll({ attributes: ['id', 'displayName', 'email', 'image'] });
+  const getAllUsers = await User.findAll({ attributes: { exclude: 'password' } });
 
   return getAllUsers;
+};
+
+const findById = async (id) => {
+  const user = await User.findByPk(id);
+
+  if (!user) {
+    const error = new Error('User does not exist');
+    error.name = 'Not Found';
+    throw error;
+  }
+
+  return user;
 };
 
 module.exports = {
   createUser,
   getAll,
+  findById,
 };
