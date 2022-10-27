@@ -8,7 +8,7 @@ const validateBody = (body) => {
 
   if (error) {
     const errorMessage = new Error('Some required fields are missing');
-    errorMessage.name = 'bad request';
+    errorMessage.name = 'Bad Request';
     
     throw errorMessage; 
   }
@@ -20,7 +20,7 @@ const validateLogin = async ({ email, password }) => {
   const user = await User.findOne({ where: { email } });
   if (!user || user.password !== password) {
     const errorMessage = new Error('Invalid fields');
-    errorMessage.name = 'bad request';
+    errorMessage.name = 'Bad Request';
     
     throw errorMessage;
   }
@@ -33,7 +33,12 @@ const validateLogin = async ({ email, password }) => {
 };
 
 const validateToken = (token) => {
-  if (!token) throw new Error('token is required');
+  if (!token) {
+    const errorMessage = new Error('Token not found');
+    errorMessage.name = 'Unauthorized';
+    
+    throw errorMessage;
+  }
 
   const isTokenValid = jwtUtils.validateToken(token);
 
