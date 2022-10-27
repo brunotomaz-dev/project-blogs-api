@@ -28,7 +28,7 @@ const getAll = async () => {
   return getAllUsers;
 };
 
-const findById = async (id) => {
+const findById = async ({ id }) => {
   const user = await User.findByPk(id);
 
   if (!user) {

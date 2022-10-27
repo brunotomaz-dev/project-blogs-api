@@ -16,8 +16,7 @@ const getAll = async (req, res) => {
 };
 
 const findById = async (req, res) => {
-  const { id } = req.params;
-  const user = await userService.findById(id);
+  const user = await userService.findById(req.params);
 
   res.status(200).json(user);
 };
