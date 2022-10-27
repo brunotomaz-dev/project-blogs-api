@@ -9,4 +9,6 @@ const authToken = (req, res, next) => {
   next();
 };
 
-module.exports = authToken;
+module.exports = {
+  authToken,
+};
