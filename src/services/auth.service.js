@@ -41,7 +41,7 @@ const validateToken = (token) => {
   }
 
   const isTokenValid = jwtUtils.validateToken(token);
-
+  
   return isTokenValid;
 };
 
