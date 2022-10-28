@@ -13,7 +13,7 @@ const createToken = (obj) => {
 const validateToken = (token) => {
   try {
     const { obj } = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(obj);
+    
     return obj;
   } catch (_error) {
     const error = new Error('Expired or invalid token');
