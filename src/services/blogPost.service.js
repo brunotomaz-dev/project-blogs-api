@@ -1,4 +1,4 @@
-const { BlogPost, PostsCategory, Category, sequelize } = require('../models');
+const { BlogPost, PostCategory, User, Category, sequelize } = require('../models');
 
 const createPost = async ({ title, content, categoryIds }, { id }) => {
   const validateCategory = await Category.findAll({ where: { id: categoryIds } });
@@ -10,23 +10,35 @@ const createPost = async ({ title, content, categoryIds }, { id }) => {
   }
 
   try {
-    const allQueries = await sequelize.transaction(async (t) => {
+    const newPost = await sequelize.transaction(async (t) => {
       const post = await BlogPost.create({ title, content, userId: id }, { transaction: t });
 
       const categoryWithAllIds = categoryIds.map((item) => ({ categoryId: item, postId: post.id }));
 
-      await PostsCategory.bulkCreate(categoryWithAllIds, { transaction: t });
+      await PostCategory.bulkCreate(categoryWithAllIds, { transaction: t });
 
       return post;
     });
 
-    return allQueries;
+    return newPost;
   } catch (error) {
     error.name = '';
     throw error;
   }
 };
 
+const getAllPosts = async () => {
+  const getAll = await BlogPost.findAll({
+    include: [
+      { model: User, as: 'user', attributes: { exclude: 'password' } },
+      { model: Category, as: 'categories', through: { attributes: [] } },
+    ],
+  });
+
+  return getAll;
+};
+
 module.exports = {
   createPost,
+  getAllPosts,
 };
