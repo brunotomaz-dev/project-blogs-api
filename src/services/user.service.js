@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const { validateNewUserData } = require('./schemas/schema');
+const { newError } = require('./validations/newError');
 
 const createUser = async ({ displayName, email, password, image }) => {
   const { error } = validateNewUserData.validate({ displayName, email, password });
@@ -14,9 +15,7 @@ const createUser = async ({ displayName, email, password, image }) => {
   });
   
   if (!created) {
-    const createError = new Error('User already registered');
-    createError.name = 'Conflict';
-    throw createError;
+    newError('Conflict', 'User already registered');
   }
   
   return user;
@@ -32,9 +31,7 @@ const findById = async ({ id }) => {
   const user = await User.findByPk(id, { attributes: { exclude: 'password' } });
 
   if (!user) {
-    const error = new Error('User does not exist');
-    error.name = 'Not Found';
-    throw error;
+    newError('Not Found', 'User does not exist');
   }
 
   return user;

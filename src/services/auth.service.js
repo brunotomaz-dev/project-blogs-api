@@ -1,16 +1,15 @@
 const { User } = require('../models');
 const { createToken } = require('../utils/jwtUtils');
 const { authBodySchema } = require('./schemas/schema');
+const { newError } = require('./validations/newError');
+
 const jwtUtils = require('../utils/jwtUtils');
 
 const validateBody = (body) => {
   const { error, value } = authBodySchema.validate(body);
 
   if (error) {
-    const errorMessage = new Error('Some required fields are missing');
-    errorMessage.name = 'Bad Request';
-    
-    throw errorMessage; 
+    newError('Bad Request', 'Some required fields are missing');
   }
   
   return value;
@@ -19,10 +18,7 @@ const validateBody = (body) => {
 const validateLogin = async ({ email, password }) => {
   const user = await User.findOne({ where: { email } });
   if (!user || user.password !== password) {
-    const errorMessage = new Error('Invalid fields');
-    errorMessage.name = 'Bad Request';
-    
-    throw errorMessage;
+    newError('Bad Request', 'Invalid fields');
   }
 
   const { password: _, ...userWithoutPass } = user.dataValues;
@@ -34,10 +30,7 @@ const validateLogin = async ({ email, password }) => {
 
 const validateToken = (token) => {
   if (!token) {
-    const errorMessage = new Error('Token not found');
-    errorMessage.name = 'Unauthorized';
-    
-    throw errorMessage;
+    newError('Unauthorized', 'Token not found');
   }
 
   const isTokenValid = jwtUtils.validateToken(token);

@@ -1,5 +1,6 @@
 const { BlogPost, PostCategory, User, Category, sequelize } = require('../models');
-const { newError } = require('./schemas/schema');
+const { newError } = require('./validations/newError');
+const { validatePostUser } = require('./validations/validations');
 
 const createPost = async ({ title, content, categoryIds }, { id }) => {
   const validateCategory = await Category.findAll({ where: { id: categoryIds } });
@@ -58,19 +59,19 @@ const updatePost = async ({ title, content }, postId, userId) => {
   }
 
   const post = await getById(postId);
-
-  if (post.userId !== userId.id) {
-    newError('Unauthorized', 'Unauthorized user');
-  }
+  validatePostUser(post, userId);
 
   await BlogPost
     .update({ title, content }, { where: { id: postId.id, userId: userId.id } });
   
- /* if (update[0] === 0) {
-    newError('Unauthorized', 'Unauthorized user');
-  } */
-
   return getById(postId);
+};
+
+const deletePost = async (postId, userId) => {
+  const post = await getById(postId);
+  validatePostUser(post, userId);
+
+  await BlogPost.destroy({ where: { id: postId.id } });
 };
 
 module.exports = {
@@ -78,4 +79,5 @@ module.exports = {
   getAllPosts,
   getById,
   updatePost,
+  deletePost,
 };
