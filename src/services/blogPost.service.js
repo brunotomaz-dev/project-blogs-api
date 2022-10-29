@@ -1,12 +1,11 @@
 const { BlogPost, PostCategory, User, Category, sequelize } = require('../models');
+const { newError } = require('./schemas/schema');
 
 const createPost = async ({ title, content, categoryIds }, { id }) => {
   const validateCategory = await Category.findAll({ where: { id: categoryIds } });
 
   if (categoryIds.length !== validateCategory.length) {
-    const error = new Error('one or more "categoryIds" not found');
-    error.name = 'Bad Request';
-    throw error;
+    newError('Bad Request', 'one or more "categoryIds" not found');
   }
 
   try {
@@ -47,16 +46,30 @@ const getById = async ({ id }) => {
   });
 
   if (!byId) {
-    const error = new Error('Post does not exist');
-    error.name = ('Not Found');
-    throw error;
+    newError('Not Found', 'Post does not exist');
   }
 
   return byId;
+};
+
+const updatePost = async ({ title, content }, postId, userId) => {
+  if (!title || !content) {
+    newError('Bad Request', 'Some required fields are missing');
+  }
+
+  const update = await BlogPost
+    .update({ title, content }, { where: { id: postId.id, userId: userId.id } });
+  
+  if (update[0] === 0) {
+    newError('Unauthorized', 'Unauthorized user');
+  }
+
+  return getById(postId);
 };
 
 module.exports = {
   createPost,
   getAllPosts,
   getById,
+  updatePost,
 };

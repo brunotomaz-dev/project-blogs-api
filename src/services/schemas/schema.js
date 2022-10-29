@@ -15,7 +15,14 @@ const validateNewUserData = Joi.object({
   'string.email': '{{#label}} must be a valid email',
 });
 
+const newError = (name, message) => {
+  const error = new Error(message);
+  error.name = name;
+  throw error;
+};
+
 module.exports = {
   authBodySchema,
   validateNewUserData,
+  newError,
 };
