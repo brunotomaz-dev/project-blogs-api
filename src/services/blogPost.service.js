@@ -57,12 +57,18 @@ const updatePost = async ({ title, content }, postId, userId) => {
     newError('Bad Request', 'Some required fields are missing');
   }
 
-  const update = await BlogPost
-    .update({ title, content }, { where: { id: postId.id, userId: userId.id } });
-  
-  if (update[0] === 0) {
+  const post = await getById(postId);
+
+  if (post.userId !== userId.id) {
     newError('Unauthorized', 'Unauthorized user');
   }
+
+  await BlogPost
+    .update({ title, content }, { where: { id: postId.id, userId: userId.id } });
+  
+ /* if (update[0] === 0) {
+    newError('Unauthorized', 'Unauthorized user');
+  } */
 
   return getById(postId);
 };
